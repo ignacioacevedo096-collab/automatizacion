@@ -24,20 +24,13 @@ def flujo_nopcommerce():
 
     # === Función auxiliar para guardar evidencias con scroll ===
     def tomar_evidencias_scroll(nombre):
-        # Captura inicial
         driver.save_screenshot(f"{evidencia_path}/{nombre}_01.png")
-
-        # Scroll parcial
         driver.execute_script("window.scrollBy(0, 600);")
         time.sleep(2)
         driver.save_screenshot(f"{evidencia_path}/{nombre}_02_scroll.png")
-
-        # Scroll hasta el final
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
         driver.save_screenshot(f"{evidencia_path}/{nombre}_03_final.png")
-
-        # Volver arriba
         driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(1)
 
@@ -94,22 +87,21 @@ def flujo_nopcommerce():
     time.sleep(2)
     tomar_evidencias_scroll("08_gift_cards")
 
-    # === Paso 9: Ir a "Apple" (Manufacturers dentro de Gift Cards) ===
+    # === Paso 9: Ir a "Apple" ===
     apple = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Apple")))
-    driver.execute_script("arguments[0].scrollIntoView(true);", apple)  # asegurar que esté visible
+    driver.execute_script("arguments[0].scrollIntoView(true);", apple)
     time.sleep(1)
-
     apple.click()
     time.sleep(2)
     tomar_evidencias_scroll("09_apple")
-    
+
     # === Paso 10: Ir a "Log in" ===
     log_in = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Log in")))
     time.sleep(1)
     log_in.click()
     time.sleep(2)
 
-    # === Paso 11: Ingresar correo en campo "Email" con manejo de StaleElement ===
+    # === Paso 11: Ingresar correo en campo "Email" ===
     for _ in range(3):
         try:
             email_input = wait.until(EC.element_to_be_clickable((By.ID, "Email")))
@@ -121,18 +113,31 @@ def flujo_nopcommerce():
         except StaleElementReferenceException:
             time.sleep(0.3)
 
-
- # === Paso 12: Ingresar correo en campo "Password" con manejo de StaleElement ===
+    # === Paso 12: Ingresar contraseña en campo "Password" ===
     for _ in range(3):
         try:
             pass_input = wait.until(EC.element_to_be_clickable((By.ID, "Password")))
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", pass_input)
             pass_input.clear()
             pass_input.send_keys("1234456")
-            driver.save_screenshot(f"{evidencia_path}/11_login_email_ingresado.png")
+            driver.save_screenshot(f"{evidencia_path}/12_login_password_ingresado.png")
             break
         except StaleElementReferenceException:
-            time.sleep(0.6)
+            time.sleep(0.3)
+
+    # === Paso 13: Click en el botón "Log in" ===
+    login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "login-button")))
+    login_button.click()
+    driver.save_screenshot(f"{evidencia_path}/13_login_boton_click.png")
+
+
+    # === Paso 14: Click en el botón "Register" ===
+    register_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "register-button")))
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", register_button)  # aseguro visibilidad
+    register_button.click()
+    driver.save_screenshot(f"{evidencia_path}/14_register_boton_click.png")
+    time.sleep(2)
+
 
     # Mantener navegador abierto unos segundos
     time.sleep(5)
