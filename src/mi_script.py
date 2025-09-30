@@ -129,16 +129,52 @@ def flujo_nopcommerce():
     login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "login-button")))
     login_button.click()
     driver.save_screenshot(f"{evidencia_path}/13_login_boton_click.png")
-
-
-    # === Paso 14: Click en el botón "Register" ===
-    register_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "register-button")))
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", register_button)  # aseguro visibilidad
-    register_button.click()
-    driver.save_screenshot(f"{evidencia_path}/14_register_boton_click.png")
+    # === Paso 14: Click en el link "Register" del header ===
+    header_register = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Register")))
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", header_register)
+    header_register.click()
+    driver.save_screenshot(f"{evidencia_path}/14_register_link_click.png")
     time.sleep(2)
 
+    # === Paso 15: Escribir nombre en campo "First name" ===
+    for _ in range(3):
+        try:
+            first_name_input = wait.until(EC.element_to_be_clickable((By.ID, "FirstName")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", first_name_input)
+            first_name_input.clear()
+            first_name_input.send_keys("Ignacio Acevedo")
+            driver.save_screenshot(f"{evidencia_path}/15_register_nombre_ingresado.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(0.3)
 
-    # Mantener navegador abierto unos segundos
-    time.sleep(5)
-    driver.quit()
+
+
+            # === Paso 16: Escribir nombre en campo "Last Name" ===
+    for _ in range(3):
+        try:
+            las_name_input = wait.until(EC.element_to_be_clickable((By.ID, "LastName")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", las_name_input)
+            las_name_input.clear()
+            las_name_input.send_keys("acevedo pajarito")
+            driver.save_screenshot(f"{evidencia_path}/15_register_apellido_ingresado.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(0.5)
+
+
+
+         # === Paso 17: Escribir correo en campo "Email" ===
+    for _ in range(3):
+        try:
+            email_input = wait.until(EC.element_to_be_clickable((By.ID, "Email")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", email_input)
+            email_input.clear()
+            email_input.send_keys("ignacio.acevedo.qa@gmail.com")
+            driver.save_screenshot(f"{evidencia_path}/17_register_email_ingresado.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(5)
+
+
+      
