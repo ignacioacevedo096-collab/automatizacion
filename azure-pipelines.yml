@@ -1,0 +1,31 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.9'
+
+  - script: pip install --upgrade pip
+    displayName: "Actualizar pip"
+
+  - script: pip install -r requirements.txt
+    displayName: "Instalar dependencias"
+
+  - script: pytest src/ --junitxml=reports/results.xml --html=reports/report.html
+    displayName: "Ejecutar pruebas"
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: 'reports/results.xml'
+      testRunTitle: "Resultados de pruebas Selenium"
+    condition: succeededOrFailed()
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'reports'
+      ArtifactName: 'TestReports'
+      publishLocation: 'Container'
