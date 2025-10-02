@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)  # Silenciar warnings de urllib3
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -17,19 +20,19 @@ def flujo_nopcommerce():
     wait = WebDriverWait(driver, 10)
     actions = ActionChains(driver)
 
-    # === Crear carpeta de evidencias con ruta absoluta ===
-    base_path = os.path.dirname(os.path.abspath(__file__))   # ruta de este archivo
+    # === Crear carpeta de evidencias ===
+    base_path = os.path.dirname(os.path.abspath(__file__))
     evidencia_path = os.path.join(base_path, "../reports/evidencias")
     os.makedirs(evidencia_path, exist_ok=True)
 
-    # === Función auxiliar para guardar evidencias con scroll ===
+    # === Función auxiliar para evidencias con scroll ===
     def tomar_evidencias_scroll(nombre):
         driver.save_screenshot(f"{evidencia_path}/{nombre}_01.png")
         driver.execute_script("window.scrollBy(0, 600);")
-        time.sleep(2)
+        time.sleep(1)
         driver.save_screenshot(f"{evidencia_path}/{nombre}_02_scroll.png")
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)
+        time.sleep(1)
         driver.save_screenshot(f"{evidencia_path}/{nombre}_03_final.png")
         driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(1)
@@ -40,7 +43,7 @@ def flujo_nopcommerce():
     time.sleep(2)
     tomar_evidencias_scroll("01_home")
 
-    # === Paso 2: Ir a "Computers" > "Notebooks" ===
+    # === Paso 2: Navegar por menú "Computers > Notebooks" ===
     computers = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Computers")))
     actions.move_to_element(computers).perform()
     notebooks = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Notebooks")))
@@ -60,7 +63,7 @@ def flujo_nopcommerce():
     time.sleep(2)
     tomar_evidencias_scroll("04_apparel")
 
-    # === Paso 5: Usar el buscador ===
+    # === Paso 5: Buscar "computer" ===
     search_box = wait.until(EC.element_to_be_clickable((By.NAME, "q")))
     search_box.clear()
     search_box.send_keys("computer")
@@ -96,12 +99,11 @@ def flujo_nopcommerce():
     tomar_evidencias_scroll("09_apple")
 
     # === Paso 10: Ir a "Log in" ===
-    log_in = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Log in")))
-    time.sleep(1)
+    log_in = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Log in")))
     log_in.click()
     time.sleep(2)
 
-    # === Paso 11: Ingresar correo en campo "Email" ===
+    # === Paso 11: Ingresar correo ===
     for _ in range(3):
         try:
             email_input = wait.until(EC.element_to_be_clickable((By.ID, "Email")))
@@ -113,7 +115,7 @@ def flujo_nopcommerce():
         except StaleElementReferenceException:
             time.sleep(0.3)
 
-    # === Paso 12: Ingresar contraseña en campo "Password" ===
+    # === Paso 12: Ingresar contraseña ===
     for _ in range(3):
         try:
             pass_input = wait.until(EC.element_to_be_clickable((By.ID, "Password")))
@@ -125,46 +127,43 @@ def flujo_nopcommerce():
         except StaleElementReferenceException:
             time.sleep(0.3)
 
-    # === Paso 13: Click en el botón "Log in" ===
+    # === Paso 13: Click en botón Log in ===
     login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "login-button")))
     login_button.click()
     driver.save_screenshot(f"{evidencia_path}/13_login_boton_click.png")
-    # === Paso 14: Click en el link "Register" del header ===
+
+    # === Paso 14: Click en link Register ===
     header_register = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Register")))
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", header_register)
     header_register.click()
     driver.save_screenshot(f"{evidencia_path}/14_register_link_click.png")
     time.sleep(2)
 
-    # === Paso 15: Escribir nombre en campo "First name" ===
+    # === Paso 15: Ingresar nombre ===
     for _ in range(3):
         try:
             first_name_input = wait.until(EC.element_to_be_clickable((By.ID, "FirstName")))
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", first_name_input)
             first_name_input.clear()
-            first_name_input.send_keys("Ignacio Acevedo")
+            first_name_input.send_keys("Ignacio")
             driver.save_screenshot(f"{evidencia_path}/15_register_nombre_ingresado.png")
             break
         except StaleElementReferenceException:
             time.sleep(0.3)
 
-
-
-            # === Paso 16: Escribir nombre en campo "Last Name" ===
+    # === Paso 16: Ingresar apellido ===
     for _ in range(3):
         try:
-            las_name_input = wait.until(EC.element_to_be_clickable((By.ID, "LastName")))
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", las_name_input)
-            las_name_input.clear()
-            las_name_input.send_keys("acevedo pajarito")
-            driver.save_screenshot(f"{evidencia_path}/15_register_apellido_ingresado.png")
+            last_name_input = wait.until(EC.element_to_be_clickable((By.ID, "LastName")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", last_name_input)
+            last_name_input.clear()
+            last_name_input.send_keys("Acevedo Pajarito")
+            driver.save_screenshot(f"{evidencia_path}/16_register_apellido_ingresado.png")
             break
         except StaleElementReferenceException:
-            time.sleep(0.5)
+            time.sleep(0.3)
 
-
-
-         # === Paso 17: Escribir correo en campo "Email" ===
+    # === Paso 17: Ingresar correo ===
     for _ in range(3):
         try:
             email_input = wait.until(EC.element_to_be_clickable((By.ID, "Email")))
@@ -174,7 +173,32 @@ def flujo_nopcommerce():
             driver.save_screenshot(f"{evidencia_path}/17_register_email_ingresado.png")
             break
         except StaleElementReferenceException:
-            time.sleep(5)
+            time.sleep(0.3)
+
+    # === Paso 18: Ingresar empresa ===
+    for _ in range(3):
+        try:
+            company_input = wait.until(EC.element_to_be_clickable((By.ID, "Company")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", company_input)
+            company_input.clear()
+            company_input.send_keys("Vamos QA 123")
+            driver.save_screenshot(f"{evidencia_path}/18_register_company_ingresado.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(0.3)
+
+    # === Paso 19: Ingresar contraseña registro ===
+    for _ in range(3):
+        try:
+            password_input = wait.until(EC.element_to_be_clickable((By.NAME, "Password")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", password_input)
+            password_input.clear()
+            password_input.send_keys("ignacio12312323123")
+            driver.save_screenshot(f"{evidencia_path}/19_register_password_ingresado.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(0.3)
 
 
-      
+if __name__ == "__main__":
+    flujo_nopcommerce()
