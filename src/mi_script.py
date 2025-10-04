@@ -199,7 +199,7 @@ def flujo_nopcommerce():
         except StaleElementReferenceException:
             time.sleep(0.3)
 
- # === Paso 20: Ingresar  confirmar contraseña registro ===
+    # === Paso 20: Confirmar contraseña ===
     for _ in range(3):
         try:
             confirmPassword_input = wait.until(EC.element_to_be_clickable((By.ID, "ConfirmPassword")))
@@ -209,9 +209,43 @@ def flujo_nopcommerce():
             driver.save_screenshot(f"{evidencia_path}/19_register_ConfirmPassword.png")
             break
         except StaleElementReferenceException:
-            time.sleep(5)
+            time.sleep(0.3)
+
+    # === Paso 21: Hacer clic en botón Register ===
+    for _ in range(3):
+        try:
+            register_button = wait.until(EC.element_to_be_clickable((By.ID, "register-button")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", register_button)
+            register_button.click()
+            driver.save_screenshot(f"{evidencia_path}/21_register-button_click.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(0.5)
+
+    # === Paso 22: Verificar registro exitoso ===
+    try:
+        success_message = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "result")))
+        if "Your registration completed" in success_message.text:
+            print("✅ Registro exitoso")
+            driver.save_screenshot(f"{evidencia_path}/22_registro_exitoso.png")
+        else:
+            print("⚠️ Registro no confirmado")
+    except:
+        print("❌ No se encontró mensaje de éxito")
+        driver.save_screenshot(f"{evidencia_path}/22_registro_fallido.png")
 
 
+# === Paso 23: Verificar registro exitoso ===
+    try:
+        success_message = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Continue")))
+        if "Your registration completed" in success_message.text:
+            print("✅ Registro exitoso")
+            driver.save_screenshot(f"{evidencia_path}/22_registro_continue.png")
+        else:
+            print("⚠️ Registro no confirmado")
+    except:
+        print("❌ No se encontró mensaje de éxito")
+        driver.save_screenshot(f"{evidencia_path}/22_registro_continue.png")
 
 if __name__ == "__main__":
     flujo_nopcommerce()
