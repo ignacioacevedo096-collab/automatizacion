@@ -199,6 +199,19 @@ def flujo_nopcommerce():
         except StaleElementReferenceException:
             time.sleep(0.3)
 
+ # === Paso 20: Ingresar  confirmar contraseña registro ===
+    for _ in range(3):
+        try:
+            confirmPassword_input = wait.until(EC.element_to_be_clickable((By.ID, "ConfirmPassword")))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", confirmPassword_input)
+            confirmPassword_input.clear()
+            confirmPassword_input.send_keys("ignacio12312323123")
+            driver.save_screenshot(f"{evidencia_path}/19_register_ConfirmPassword.png")
+            break
+        except StaleElementReferenceException:
+            time.sleep(5)
+
+
 
 if __name__ == "__main__":
     flujo_nopcommerce()
